@@ -147,27 +147,31 @@ const displayController = (function (game) {
   function updateGameboard() {
     let color = "black";
     const boardState = game.board.getState();
-    for (var i = 0; i < boardState.length; i++) {
-      for (var j = 0; j < boardState[i].length; j++) {
+    for (var i = 0; i < game.board.getNumberRows(); i++) {
+      for (var j = 0; j < game.board.getNumberCols(); j++) {
         game.players.every((player) => {
           if (boardState[i][j] === player.id) {
             color = player.color;
             return false;
           } else {
-            color = "black";
+            color = "black";      }
+          }
+        }
             return true;
           }
         });
         gameboardElem.children[
-          j + i * boardState[i].length
+          j + i * game.board.getNumberCols()
         ].style.backgroundColor = color;
       }
     }
   }
 
   function gameboardCellPressed(e) {
-    let rowIndex = e.target.dataset.index % game.board.getNumberRows();
     let colIndex = e.target.dataset.index % game.board.getNumberCols();
+    let rowIndex =
+      (e.target.dataset.index - colIndex) / game.board.getNumberCols();
+    console.log(`${rowIndex} ${colIndex}`);
     game.playerMove(rowIndex, colIndex);
     updateGameboard();
   }
