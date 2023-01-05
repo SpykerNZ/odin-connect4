@@ -91,8 +91,17 @@ const Player = (username, color, type, id) => {
   return { username, color, type, id };
 };
 
-const player1 = Player("P1", "#0000FF", null, 1);
-const player2 = Player("P2", "#FF0000", null, 2);
+const playerFactory = (() => {
+  let _id = 1;
+
+  function create(username, color, type) {
+    return Player(username, color, type, _id++);
+  }
+  return { create };
+})();
+
+const player1 = playerFactory.create("P1", "#0000FF", null);
+const player2 = playerFactory.create("P2", "#FF0000", null);
 
 const game = (function (board, rules, players) {
   let activePlayerIndex = 0;
