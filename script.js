@@ -154,9 +154,7 @@ const displayController = (function (game) {
             color = player.color;
             return false;
           } else {
-            color = "black";      }
-          }
-        }
+            color = "black";
             return true;
           }
         });
