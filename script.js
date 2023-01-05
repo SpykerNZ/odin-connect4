@@ -32,11 +32,35 @@ const gameboard = (function (rows, columns) {
   }
 
   function getDiagTopDown(row, col) {
-    return;
+    let result = [];
+    while (row > 0 && col > 0) {
+      // is space to move (top/left)?
+      row--;
+      col--;
+    }
+    while (row < getNumberRows() && col < getNumberCols()) {
+      // are items in the range to collect?
+      result.push(_grid[row][col]);
+      row++;
+      col++;
+    }
+    return result;
   }
 
   function getDiagBottomUp(row, col) {
-    return;
+    let result = [];
+    while (row > 0 && col + 1 < getNumberCols()) {
+      // is space to move (top/right)?
+      row--;
+      col++;
+    }
+    while (row < getNumberRows() && col >= 0) {
+      // are items in the range to collect?
+      result.push(_grid[row][col]);
+      row++;
+      col--;
+    }
+    return result;
   }
 
   function setCell(value, row, col) {
@@ -97,19 +121,21 @@ const connect4 = (function () {
     const directions = {
       row: board.getRow(lastMove.row),
       col: board.getCol(lastMove.col),
-      diagBottomUp: board.getCol(lastMove.col),
-      diagBottomDown: board.getCol(lastMove.col),
+      diagBottomUp: board.getDiagBottomUp(lastMove.row, lastMove.col),
+      diagTopDown: board.getDiagTopDown(lastMove.row, lastMove.col),
     };
 
     for (const key in directions) {
       if (_isConsecutive(directions[key], lastMove.value, consecutiveCount)) {
+        console.log(key);
         return true;
       }
     }
   }
 
   function checkDrawCondition(board) {
-    _isConsecutive(board.getCol());
+    // If the entire top row is filled, it is a draw
+    return board.getRow(0).includes(0);
   }
 
   function _isConsecutive(arr, value, count) {
