@@ -98,10 +98,20 @@ const game = (function (board, rules, players) {
   let activePlayerIndex = 0;
 
   function playerMove(row, col) {
+    // Check Move is Valid
     if (!rules.checkValidMove(board, row, col)) {
       return;
     }
+    // Execute the move
     rules.executeMove(board, players[activePlayerIndex].id, row, col);
+
+    // Check for win condition
+    rules.checkWinCondition(board);
+
+    // Check for lost condition
+    rules.checkDrawCondition(board);
+
+    // Update the current player index
     activePlayerIndex = (activePlayerIndex + 1) % players.length;
   }
 
