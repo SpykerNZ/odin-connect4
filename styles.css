@@ -1,0 +1,17 @@
+@import url("reset.css");
+
+body {
+  background-color: lightblue;
+}
+
+.gameboard {
+  display: grid;
+  width: 400px;
+  height: 400px;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cell {
+  border: 1px solid blue;
+  background-color: black;
+}
