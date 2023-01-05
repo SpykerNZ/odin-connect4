@@ -31,6 +31,14 @@ const gameboard = (function (rows, columns) {
     });
   }
 
+  function getDiagTopDown(row, col) {
+    return;
+  }
+
+  function getDiagBottomUp(row, col) {
+    return;
+  }
+
   function setCell(value, row, col) {
     _grid[row][col] = value;
   }
@@ -47,6 +55,8 @@ const gameboard = (function (rows, columns) {
     getState,
     getRow,
     getCol,
+    getDiagTopDown,
+    getDiagBottomUp,
     setCell,
     reset,
     getNumberRows,
@@ -55,6 +65,12 @@ const gameboard = (function (rows, columns) {
 })(6, 7);
 
 const connect4 = (function () {
+  let lastMove = {
+    row: null,
+    col: null,
+    value: null,
+  };
+
   function checkValidMove(board, row, col) {
     return board.getCol(col)[row] === 0;
   }
@@ -69,16 +85,47 @@ const connect4 = (function () {
         break;
       }
     }
+    lastMove.row = targetRow;
+    lastMove.col = targetCol;
+    lastMove.value = value;
     board.setCell(value, targetRow, targetCol);
   }
 
   function checkWinCondition(board) {
-    // TODO
+    // check for 4 consective values of the same type in a row
+    const consecutiveCount = 4;
+    const directions = {
+      row: board.getRow(lastMove.row),
+      col: board.getCol(lastMove.col),
+      diagBottomUp: board.getCol(lastMove.col),
+      diagBottomDown: board.getCol(lastMove.col),
+    };
+
+    for (const key in directions) {
+      if (_isConsecutive(directions[key], lastMove.value, consecutiveCount)) {
+        return true;
+      }
+    }
   }
 
   function checkDrawCondition(board) {
-    // TODO
+    _isConsecutive(board.getCol());
   }
+
+  function _isConsecutive(arr, value, count) {
+    let consecutiveCount = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === value) {
+        consecutiveCount += 1;
+        if (consecutiveCount === count) {
+          return true;
+        }
+      } else {
+        consecutiveCount = 0;
+      }
+    }
+  }
+
   return {
     checkValidMove,
     executeMove,
@@ -104,7 +151,7 @@ const player1 = playerFactory.create("P1", "#0000FF", null);
 const player2 = playerFactory.create("P2", "#FF0000", null);
 
 const game = (function (board, rules, players) {
-  let activePlayerIndex = 0;
+  let activePlayerIndex = Math.floor(Math.random() * players.length);
 
   function playerMove(row, col) {
     // Check Move is Valid
