@@ -218,6 +218,10 @@ const setupController = (function (players) {
 const game = (function (board, rules, players) {
   let activePlayerIndex = Math.floor(Math.random() * players.length);
 
+  function getActivePlayerIndex() {
+    return activePlayerIndex;
+  }
+
   function executeMove(row, col) {
     // Check Move is Valid
     if (!rules.checkValidMove(board, row, col)) {
@@ -242,7 +246,7 @@ const game = (function (board, rules, players) {
     board,
     players,
     executeMove,
-    activePlayerIndex,
+    getActivePlayerIndex,
   };
 })(gameboard, connect4, [player1, player2]);
 
@@ -292,7 +296,7 @@ const gameController = (function (game) {
 
   function updateStatusText() {
     statusTextElem.textContent = `${
-      game.players[game.activePlayerIndex].username
+      game.players[game.getActivePlayerIndex()].username
     }'s turn!`;
   }
 
@@ -310,7 +314,9 @@ const gameController = (function (game) {
     createGameboard,
     updateGameboard,
     destroyGameboard,
+    updateStatusText,
   };
 })(game);
 
 gameController.createGameboard();
+gameController.updateStatusText();
