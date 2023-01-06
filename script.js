@@ -1,17 +1,65 @@
-import { Gameboard } from "./scripts/gameboard.js";
+import { Board } from "./scripts/board.js";
 import { Connect4 } from "./scripts/rules.js";
-import { Player, PlayerFactory } from "./scripts/players.js";
+import { PlayerFactory } from "./scripts/players.js";
+import { Turn } from "./scripts/turn.js";
+import { State } from "./scripts/state.js";
 
 const model = (function () {
-  const playerFactory = PlayerFactory();
-  const gameboard = Gameboard(6, 7);
-  const connect4 = Connect4();
+  const _playerFactory = PlayerFactory();
+  const players = _playerFactory.createMultiple(2);
+  const rules = Connect4();
+  const gameboard = Board(6, 7);
+  const state = State();
+  const turn = Turn();
+
+  function executeMove(row, col) {
+    const player = players[state.activePlayerIndex];
+
+    // TODO - convert from row/column selection to column move.
+
+    if (rules.checkValidMove(gameboard, player.id, row, col)) {
+      gameboard.setCell(player.id, row, col);
+    } else {
+      console.log("invalid!");
+      return;
+    }
+
+    if (rules.checkMoveWinCondition(gameboard, player.id, row, col)) {
+      console.log("winner!");
+    } else if (rules.checkDrawCondition(gameboard)) {
+      console.log("draw!");
+    } else {
+      console.log("next player turn");
+      state.activePlayerIndex = turn.nextPlayer(
+        state.activePlayerIndex,
+        players.length
+      );
+    }
+  }
+
+  return {
+    executeMove,
+    gameboard,
+    players,
+  };
 })();
 
 const view = (function () {
   const containerElem = document.querySelector(".container");
   const setupPageElem = containerElem.querySelector(".setup");
   const gamePageElem = containerElem.querySelector(".game");
+
+  const startButtonElem = setupPageElem.querySelector("button.start");
+  const endButtonElem = gamePageElem.querySelector("button.end");
+  const restartButtonElem = gamePageElem.querySelector("button.restart");
+
+  const gameboardElem = gamePageElem.querySelector(".gameboard");
+
+  const gameboardColors = {
+    emptyCell: "#FFFFFF",
+    background: "#000000",
+    playerArray: ["#FFFF00", "#FF0000"],
+  };
 
   function changeToSetupPage() {
     setupPageElem.style.display = "flex";
@@ -28,41 +76,100 @@ const view = (function () {
   }
 
   function createGameBoard(gameboard) {
-    for (
-      let i = 0;
-      i < gameboard.getNumberRows() * gameboard.getNumberCols();
-      i++
-    ) {
-      const elemDiv = document.createElement("div");
-      elemDiv.classList.add("cell");
-      elemDiv.dataset.index = `${i}`;
-      elemDiv.addEventListener("click", gameboardCellPressed);
-      gameboardElem.appendChild(elemDiv);
+    destroyGameboard();
+    for (var i = 0; i < gameboard.getNumberRows(); i++) {
+      for (var j = 0; j < gameboard.getNumberCols(); j++) {
+        const elemDiv = document.createElement("div");
+        elemDiv.classList.add("cell");
+        elemDiv.dataset.row = `${i}`;
+        elemDiv.dataset.col = `${j}`;
+        gameboardElem.appendChild(elemDiv);
+      }
     }
+    updateGameboard(gameboard);
   }
 
-  function gameboardCellPressed(e) {
-    let colIndex = e.target.dataset.index % game.board.getNumberCols();
-    let rowIndex =
-      (e.target.dataset.index - colIndex) / game.board.getNumberCols();
-    console.log(`${rowIndex} ${colIndex}`);
-    // how will we execute the game move here?
-    const result = game.executeMove(rowIndex, colIndex);
-    // how do we pass the color array and gameboard here?
-    updateGameboard();
-  }
-
-  function updateGameboard(gameboard, colorArray) {
-    let color = colorArray[0];
+  function updateGameboard(gameboard) {
+    let colorArray = [gameboardColors.emptyCell];
+    gameboardColors.playerArray.forEach((color) => {
+      colorArray.push(color);
+    });
     const boardState = gameboard.getState();
     for (var i = 0; i < gameboard.getNumberRows(); i++) {
       for (var j = 0; j < gameboard.getNumberCols(); j++) {
         gameboardElem.children[
-          j + i * game.board.getNumberCols()
-        ].style.backgroundColor = color[boardState[i][j]];
+          j + i * gameboard.getNumberCols()
+        ].style.backgroundColor = colorArray[boardState[i][j]];
       }
     }
   }
+
+  function bindStartGame(handler) {
+    startButtonElem.addEventListener("click", (e) => {
+      handler();
+    });
+  }
+
+  function bindEndGame(handler) {
+    endButtonElem.addEventListener("click", (e) => {
+      handler();
+    });
+  }
+
+  function bindRestartGame(handler) {
+    restartButtonElem.addEventListener("click", (e) => {
+      handler();
+    });
+  }
+
+  function bindGameboard(handler) {
+    const cellElems = gameboardElem.querySelectorAll(".cell");
+    for (let i = 0; i < cellElems.length; i++) {
+      const cellElem = cellElems[i];
+      cellElem.addEventListener("click", () =>
+        handler(cellElem.dataset.row, cellElem.dataset.col)
+      );
+    }
+  }
+
+  return {
+    changeToGamePage,
+    changeToSetupPage,
+    createGameBoard,
+    destroyGameboard,
+    updateGameboard,
+    bindStartGame,
+    bindEndGame,
+    bindRestartGame,
+    bindGameboard,
+  };
 })();
 
-const Presenter = (function (model, view) {})(model, view);
+const controller = (function (model, view) {
+  view.bindStartGame(handleStartGame);
+  view.bindEndGame(handleEndGame);
+  view.bindRestartGame(handleRestartGame);
+
+  function handleStartGame() {
+    view.changeToGamePage();
+    view.createGameBoard(model.gameboard);
+    view.bindGameboard(handleGameboardCellPressed);
+    // TODO - modify the players object based on the setup
+  }
+
+  function handleEndGame() {
+    view.changeToSetupPage();
+    view.destroyGameboard();
+  }
+
+  function handleRestartGame() {
+    console.log("restart");
+    view.updateGameboard(model.gameboard);
+  }
+
+  function handleGameboardCellPressed(row, col) {
+    console.log(`row: ${row} col: ${col}`);
+    model.executeMove(row, col);
+    view.updateGameboard(model.gameboard);
+  }
+})(model, view);

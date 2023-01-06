@@ -1,41 +1,9 @@
 export const Connect4 = function () {
-  const moveResult = {
-    invalid: "invalid",
-    win: "win",
-    draw: "draw",
-    success: "success",
-  };
-
-  function executeMove(board, value, row, col) {
-    if (!_checkValidMove(board, row, col)) {
-      return moveResult.invalid;
-    }
-
-    let targetCol = col;
-    let targetRow = 0;
-    // Iterate over column backwards and place at first free spot
-    for (let i = board.getNumberRows() - 1; i >= 0; i--) {
-      if (board.getState()[i][col] === 0) {
-        targetRow = i;
-        break;
-      }
-    }
-    board.setCell(value, targetRow, targetCol);
-
-    if (_checkWinCondition(board, row, col)) {
-      return moveResult.win;
-    }
-    if (_checkDrawCondition(board, row, col)) {
-      return moveResult.draw;
-    }
-    return moveResult.success;
-  }
-
-  function _checkValidMove(board, row, col) {
+  function checkValidMove(board, value, row, col) {
     return board.getCol(col)[row] === 0;
   }
 
-  function _checkWinCondition(board, value, row, col) {
+  function checkMoveWinCondition(board, value, row, col) {
     // check for 4 consective values of the same type in a row
     const consecutiveCount = 4;
     const directions = {
@@ -53,7 +21,7 @@ export const Connect4 = function () {
     }
   }
 
-  function _checkDrawCondition(board) {
+  function checkDrawCondition(board) {
     // If the entire top row is filled, it is a draw
     return !board.getRow(0).includes(0);
   }
@@ -73,6 +41,8 @@ export const Connect4 = function () {
   }
 
   return {
-    executeMove,
+    checkValidMove,
+    checkMoveWinCondition,
+    checkDrawCondition,
   };
 };

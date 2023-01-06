@@ -1,4 +1,4 @@
-export const Gameboard = function (rows, columns) {
+export const Board = function (rows, columns) {
   const _grid = _create(rows, columns);
 
   function _create(rows, cols) {
