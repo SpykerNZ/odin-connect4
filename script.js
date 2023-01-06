@@ -1,4 +1,4 @@
-import { Board } from "./scripts/board.js";
+import { Board, highestIndexOf } from "./scripts/board.js";
 import { Connect4 } from "./scripts/rules.js";
 import { PlayerFactory } from "./scripts/players.js";
 import { Turn } from "./scripts/turn.js";
@@ -15,16 +15,16 @@ const model = (function () {
   function executeMove(row, col) {
     const player = players[state.activePlayerIndex];
 
-    // TODO - convert from row/column selection to column move.
+    const row_ = highestIndexOf(gameboard.getCol(col), 0);
 
-    if (rules.checkValidMove(gameboard, player.id, row, col)) {
-      gameboard.setCell(player.id, row, col);
+    if (rules.checkValidMove(gameboard, player.id, row_, col)) {
+      gameboard.setCell(player.id, row_, col);
     } else {
       console.log("invalid!");
       return;
     }
 
-    if (rules.checkMoveWinCondition(gameboard, player.id, row, col)) {
+    if (rules.checkMoveWinCondition(gameboard, player.id, row_, col)) {
       console.log("winner!");
     } else if (rules.checkDrawCondition(gameboard)) {
       console.log("draw!");
@@ -163,7 +163,6 @@ const controller = (function (model, view) {
   }
 
   function handleRestartGame() {
-    console.log("restart");
     view.updateGameboard(model.gameboard);
   }
 
