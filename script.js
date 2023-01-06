@@ -176,6 +176,27 @@ const playerFactory = (() => {
 const player1 = playerFactory.create("P1", "#0000FF", null);
 const player2 = playerFactory.create("P2", "#FF0000", null);
 
+const setupController = (function (players) {
+  const gameElem = document.querySelector(".game");
+  const setupElem = document.querySelector(".setup");
+  const playersElem = setupElem.querySelectorAll(".player");
+  const startButtonElem = setupElem.querySelector("button.start");
+  startButtonElem.addEventListener("click", startGame);
+
+  function startGame() {
+    for (let i = 0; i < playersElem.length; i++) {
+      players[i].type = playersElem[i].querySelector("select.type").value;
+      players[i].username = playersElem[i].querySelector("input.name").value;
+      players[i].color = playersElem[i].querySelector("input.color").value;
+      setupElem.style.display = "none";
+      gameElem.style.display = "block";
+    }
+  }
+  return {
+    startGame,
+  };
+})([player1, player2]);
+
 const game = (function (board, rules, players) {
   let activePlayerIndex = Math.floor(Math.random() * players.length);
 
@@ -204,7 +225,7 @@ const game = (function (board, rules, players) {
   };
 })(gameboard, connect4, [player1, player2]);
 
-const displayController = (function (game) {
+const gameController = (function (game) {
   const gameboardElem = document.querySelector(".gameboard");
 
   function destroyGameboard() {
@@ -263,4 +284,4 @@ const displayController = (function (game) {
   };
 })(game);
 
-displayController.createGameboard();
+gameController.createGameboard();
