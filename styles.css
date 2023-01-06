@@ -1,12 +1,16 @@
 @import url("reset.css");
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: lightgray;
 }
 
-div {
+/* div {
   border: 1px solid red;
-}
+} */
 
 .header {
   display: flex;
