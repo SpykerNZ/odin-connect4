@@ -10,11 +10,55 @@
   </head>
   <body>
     <div class="container">
+      <div class="header">
         <p class="title">Connect 4</p>
+      </div>
+
+      <div class="setup">
+        <p class="title">Game Setup</p>
+        <div class="players">
+          <div class="player">
+            <div class="setting">
+              <label for="type" class="type">Type</label>
+              <select type="select" class="type">
+                <option value="human">Human</option>
+                <option value="ai-easy">AI - Easy</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label for="name" class="name">Name</label>
+              <input type="text" class="name" value="Player 1" />
+            </div>
+            <div class="setting">
+              <label for="color" class="color">Color</label>
+              <input type="color" class="color" value="#FFFF00" />
+            </div>
+          </div>
+          <div class="player">
+            <div class="setting">
+              <label for="type" class="type">Type</label>
+              <select type="select" class="type">
+                <option value="human">Human</option>
+                <option value="ai-easy">AI - Easy</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label for="name" class="name">Name</label>
+              <input type="text" class="name" value="Player 2" />
+            </div>
+            <div class="setting">
+              <label for="color" class="color">Color</label>
+              <input type="color" class="color" value="#FF0000" />
+            </div>
+          </div>
+        </div>
+        <button class="start">Let's Go!</button>
+      </div>
+      <div class="game">
         <p class="status">Player X turn</p>
         <div class="gameboard"></div>
-          <!-- Generate the game board dynamically! -->
-        </div>
+        <!-- Generate the game board dynamically! -->
+      </div>
     </div>
   </body>
 </html>
