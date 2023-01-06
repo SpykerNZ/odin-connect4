@@ -218,7 +218,7 @@ const setupController = (function (players) {
 const game = (function (board, rules, players) {
   let activePlayerIndex = Math.floor(Math.random() * players.length);
 
-  function playerMove(row, col) {
+  function executeMove(row, col) {
     // Check Move is Valid
     if (!rules.checkValidMove(board, row, col)) {
       return;
@@ -234,17 +234,21 @@ const game = (function (board, rules, players) {
 
     // Update the current player index
     activePlayerIndex = (activePlayerIndex + 1) % players.length;
+
+    // If the next player is an AI, select a move after a delay
   }
 
   return {
     board,
     players,
-    playerMove,
+    executeMove,
+    activePlayerIndex,
   };
 })(gameboard, connect4, [player1, player2]);
 
 const gameController = (function (game) {
   const gameboardElem = document.querySelector(".gameboard");
+  const statusTextElem = document.querySelector(".status-text");
 
   function destroyGameboard() {
     gameboardElem.innerHTML = "";
@@ -286,13 +290,20 @@ const gameController = (function (game) {
     }
   }
 
+  function updateStatusText() {
+    statusTextElem.textContent = `${
+      game.players[game.activePlayerIndex].username
+    }'s turn!`;
+  }
+
   function gameboardCellPressed(e) {
     let colIndex = e.target.dataset.index % game.board.getNumberCols();
     let rowIndex =
       (e.target.dataset.index - colIndex) / game.board.getNumberCols();
     console.log(`${rowIndex} ${colIndex}`);
-    game.playerMove(rowIndex, colIndex);
+    game.executeMove(rowIndex, colIndex);
     updateGameboard();
+    updateStatusText();
   }
 
   return {
