@@ -173,21 +173,39 @@ const playerFactory = (() => {
   return { create };
 })();
 
-const player1 = playerFactory.create("P1", "#0000FF", null);
-const player2 = playerFactory.create("P2", "#FF0000", null);
+const player1 = playerFactory.create("Player 1", "#0000FF", "human");
+const player2 = playerFactory.create("Player 2", "#FF0000", "human");
 
 const setupController = (function (players) {
   const gameElem = document.querySelector(".game");
   const setupElem = document.querySelector(".setup");
   const playersElem = setupElem.querySelectorAll(".player");
   const startButtonElem = setupElem.querySelector("button.start");
+  const playerElems = _loadPlayers();
+
   startButtonElem.addEventListener("click", startGame);
 
-  function startGame() {
+  function _loadPlayers() {
+    const playerElems = [];
     for (let i = 0; i < playersElem.length; i++) {
-      players[i].type = playersElem[i].querySelector("select.type").value;
-      players[i].username = playersElem[i].querySelector("input.name").value;
-      players[i].color = playersElem[i].querySelector("input.color").value;
+      const playerElem = {
+        typeElem: playersElem[i].querySelector("select.type"),
+        usernameElem: playersElem[i].querySelector("input.name"),
+        colorElem: playersElem[i].querySelector("input.color"),
+      };
+      playerElem.typeElem.value = players[i].type;
+      playerElem.usernameElem.value = players[i].username;
+      playerElem.colorElem.value = players[i].color;
+      playerElems.push(playerElem);
+    }
+    return playerElems;
+  }
+
+  function startGame() {
+    for (let i = 0; i < playerElems.length; i++) {
+      players[i].type = playerElems[i].typeElem.value;
+      players[i].username = playerElems[i].usernameElem.value;
+      players[i].color = playerElems[i].colorElem.value;
       setupElem.style.display = "none";
       gameElem.style.display = "block";
     }
