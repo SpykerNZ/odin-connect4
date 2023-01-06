@@ -207,7 +207,7 @@ const setupController = (function (players) {
       players[i].username = playerElems[i].usernameElem.value;
       players[i].color = playerElems[i].colorElem.value;
       setupElem.style.display = "none";
-      gameElem.style.display = "block";
+      gameElem.style.display = "flex";
     }
   }
   return {

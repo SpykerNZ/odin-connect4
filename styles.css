@@ -8,9 +8,9 @@ body {
   background-color: lightgray;
 }
 
-/* div {
+div {
   border: 1px solid red;
-} */
+}
 
 .header {
   display: flex;
@@ -58,16 +58,37 @@ button.start {
 
 .game {
   display: none;
+  justify-content: center;
+}
+
+.game > .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gameboard {
   display: grid;
-  width: 400px;
-  height: 400px;
+  gap: 10px;
+  padding: 10px;
   grid-template-columns: repeat(7, 1fr);
+  background-color: darkblue;
 }
 
 .cell {
+  width: 60px;
+  height: 60px;
   border: 1px solid blue;
+  border-radius: 30px;
   background-color: black;
+}
+
+.gameover {
+  display: flex;
+  gap: 10px;
+}
+
+.gameover button {
+  height: 30px;
+  width: 100px;
 }
