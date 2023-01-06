@@ -135,7 +135,7 @@ const connect4 = (function () {
 
   function checkDrawCondition(board) {
     // If the entire top row is filled, it is a draw
-    return board.getRow(0).includes(0);
+    return !board.getRow(0).includes(0);
   }
 
   function _isConsecutive(arr, value, count) {
@@ -176,45 +176,6 @@ const playerFactory = (() => {
 const player1 = playerFactory.create("Player 1", "#0000FF", "human");
 const player2 = playerFactory.create("Player 2", "#FF0000", "human");
 
-const setupController = (function (players) {
-  const gameElem = document.querySelector(".game");
-  const setupElem = document.querySelector(".setup");
-  const playersElem = setupElem.querySelectorAll(".player");
-  const startButtonElem = setupElem.querySelector("button.start");
-  const playerElems = _loadPlayers();
-
-  startButtonElem.addEventListener("click", startGame);
-
-  function _loadPlayers() {
-    const playerElems = [];
-    for (let i = 0; i < playersElem.length; i++) {
-      const playerElem = {
-        typeElem: playersElem[i].querySelector("select.type"),
-        usernameElem: playersElem[i].querySelector("input.name"),
-        colorElem: playersElem[i].querySelector("input.color"),
-      };
-      playerElem.typeElem.value = players[i].type;
-      playerElem.usernameElem.value = players[i].username;
-      playerElem.colorElem.value = players[i].color;
-      playerElems.push(playerElem);
-    }
-    return playerElems;
-  }
-
-  function startGame() {
-    for (let i = 0; i < playerElems.length; i++) {
-      players[i].type = playerElems[i].typeElem.value;
-      players[i].username = playerElems[i].usernameElem.value;
-      players[i].color = playerElems[i].colorElem.value;
-      setupElem.style.display = "none";
-      gameElem.style.display = "flex";
-    }
-  }
-  return {
-    startGame,
-  };
-})([player1, player2]);
-
 const game = (function (board, rules, players) {
   let activePlayerIndex = Math.floor(Math.random() * players.length);
 
@@ -225,21 +186,24 @@ const game = (function (board, rules, players) {
   function executeMove(row, col) {
     // Check Move is Valid
     if (!rules.checkValidMove(board, row, col)) {
-      return;
+      return "invalid";
     }
     // Execute the move
     rules.executeMove(board, players[activePlayerIndex].id, row, col);
 
     // Check for win condition
-    rules.checkWinCondition(board);
+    if (rules.checkWinCondition(board)) {
+      return "win";
+    }
 
-    // Check for lost condition
-    rules.checkDrawCondition(board);
+    // Check for draw condition
+    if (rules.checkDrawCondition(board)) {
+      return "draw";
+    }
 
     // Update the current player index
     activePlayerIndex = (activePlayerIndex + 1) % players.length;
-
-    // If the next player is an AI, select a move after a delay
+    return "valid";
   }
 
   return {
@@ -251,8 +215,38 @@ const game = (function (board, rules, players) {
 })(gameboard, connect4, [player1, player2]);
 
 const gameController = (function (game) {
+  const gameElem = document.querySelector(".game");
+  const setupElem = document.querySelector(".setup");
   const gameboardElem = document.querySelector(".gameboard");
   const statusTextElem = document.querySelector(".status-text");
+  const gameoverElem = document.querySelector(".gameover");
+  const restartButtonElem = document.querySelector("button.restart");
+  const backButtonElem = document.querySelector("button.back");
+
+  restartButtonElem.addEventListener("click", resetGame);
+  backButtonElem.addEventListener("click", quitGame);
+
+  function startGame() {
+    createGameboard();
+    updateStatusText();
+    gameoverElem.style.display = "none";
+    updateGameboard();
+  }
+
+  function endGame() {
+    gameoverElem.style.display = "flex";
+  }
+
+  function resetGame() {
+    game.board.reset();
+    updateGameboard();
+    gameoverElem.style.display = "none";
+  }
+
+  function quitGame() {
+    setupElem.style.display = "flex";
+    gameElem.style.display = "none";
+  }
 
   function destroyGameboard() {
     gameboardElem.innerHTML = "";
@@ -305,9 +299,14 @@ const gameController = (function (game) {
     let rowIndex =
       (e.target.dataset.index - colIndex) / game.board.getNumberCols();
     console.log(`${rowIndex} ${colIndex}`);
-    game.executeMove(rowIndex, colIndex);
+    const result = game.executeMove(rowIndex, colIndex);
+
+    if (result == "win" || result == "draw") {
+      endGame();
+    } else {
+      updateStatusText();
+    }
     updateGameboard();
-    updateStatusText();
   }
 
   return {
@@ -315,8 +314,48 @@ const gameController = (function (game) {
     updateGameboard,
     destroyGameboard,
     updateStatusText,
+    startGame,
+    endGame,
+    quitGame,
   };
 })(game);
 
-gameController.createGameboard();
-gameController.updateStatusText();
+const setupController = (function (gameController, players) {
+  const gameElem = document.querySelector(".game");
+  const setupElem = document.querySelector(".setup");
+  const playersElem = setupElem.querySelectorAll(".player");
+  const startButtonElem = setupElem.querySelector("button.start");
+  const playerElems = _loadPlayers();
+
+  startButtonElem.addEventListener("click", startGame);
+
+  function _loadPlayers() {
+    const playerElems = [];
+    for (let i = 0; i < playersElem.length; i++) {
+      const playerElem = {
+        typeElem: playersElem[i].querySelector("select.type"),
+        usernameElem: playersElem[i].querySelector("input.name"),
+        colorElem: playersElem[i].querySelector("input.color"),
+      };
+      playerElem.typeElem.value = players[i].type;
+      playerElem.usernameElem.value = players[i].username;
+      playerElem.colorElem.value = players[i].color;
+      playerElems.push(playerElem);
+    }
+    return playerElems;
+  }
+
+  function startGame() {
+    for (let i = 0; i < playerElems.length; i++) {
+      players[i].type = playerElems[i].typeElem.value;
+      players[i].username = playerElems[i].usernameElem.value;
+      players[i].color = playerElems[i].colorElem.value;
+      setupElem.style.display = "none";
+      gameElem.style.display = "flex";
+    }
+    gameController.startGame();
+  }
+  return {
+    startGame,
+  };
+})(gameController, [player1, player2]);
