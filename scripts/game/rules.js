@@ -1,16 +1,18 @@
-export const Connect4 = function () {
+import { matrix } from "./matrix.js";
+
+export const connect4 = (function () {
   function checkValidMove(board, value, row, col) {
-    return board.getCol(col)[row] === 0;
+    return matrix.getCol(board, col)[row] === 0;
   }
 
   function checkMoveWinCondition(board, value, row, col) {
     // check for 4 consective values of the same type in a row
     const consecutiveCount = 4;
     const directions = {
-      row: board.getRow(row),
-      col: board.getCol(col),
-      diagBottomUp: board.getDiagBottomUp(row, col),
-      diagTopDown: board.getDiagTopDown(row, col),
+      row: matrix.getRow(board, row),
+      col: matrix.getCol(board, col),
+      diagBottomUp: matrix.getDiagBottomUp(board, row, col),
+      diagTopDown: matrix.getDiagTopDown(board, row, col),
     };
 
     for (const key in directions) {
@@ -23,7 +25,7 @@ export const Connect4 = function () {
 
   function checkDrawCondition(board) {
     // If the entire top row is filled, it is a draw
-    return !board.getRow(0).includes(0);
+    return !matrix.getRow(board, 0).includes(0);
   }
 
   function _isConsecutive(arr, value, count) {
@@ -45,4 +47,4 @@ export const Connect4 = function () {
     checkMoveWinCondition,
     checkDrawCondition,
   };
-};
+})();

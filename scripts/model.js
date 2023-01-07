@@ -1,44 +1,44 @@
-import { Board, highestIndexOf } from "./game/board.js";
-import { Connect4 } from "./game/rules.js";
+import { matrix, highestIndexOf } from "./game/matrix.js";
+import { connect4 as rules } from "./game/rules.js";
 import { PlayerFactory } from "./game/players.js";
-import { Turn } from "./game/turn.js";
+import { turn } from "./game/turn.js";
 import { State } from "./game/state.js";
 
 export const Model = function () {
   const _playerFactory = PlayerFactory();
-  const players = _playerFactory.createMultiple(2);
-  const rules = Connect4();
-  const gameboard = Board(6, 7);
+
   const state = State();
-  const turn = Turn();
+
+  state.players = _playerFactory.createMultiple(2);
 
   function executeMove(row, col) {
-    const player = players[state.activePlayerIndex];
+    const player = turn.getActivePlayer(state);
+    const row_ = highestIndexOf(matrix.getCol(state.board, col), 0);
 
-    const row_ = highestIndexOf(gameboard.getCol(col), 0);
-
-    if (rules.checkValidMove(gameboard, player.id, row_, col)) {
-      gameboard.setCell(player.id, row_, col);
+    if (rules.checkValidMove(state.board, player.id, row_, col)) {
+      matrix.setCell(state.board, player.id, row_, col);
     } else {
       console.log("invalid!");
       return;
     }
 
-    if (rules.checkMoveWinCondition(gameboard, player.id, row_, col)) {
+    if (rules.checkMoveWinCondition(state.board, player.id, row_, col)) {
       console.log("winner!");
-    } else if (rules.checkDrawCondition(gameboard)) {
+    } else if (rules.checkDrawCondition(state.board)) {
       console.log("draw!");
     } else {
       console.log("next player turn");
-      state.activePlayerIndex = turn.nextPlayer(
-        state.activePlayerIndex,
-        players.length
-      );
+      turn.nextPlayer(state);
     }
   }
+
+  function resetGame() {
+    state.reset();
+  }
+
   return {
+    resetGame,
     executeMove,
-    gameboard,
-    players,
+    state,
   };
 };

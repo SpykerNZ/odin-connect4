@@ -1,3 +1,6 @@
+import { PlayerFactory } from "./game/players.js";
+import { matrix } from "./game/matrix.js";
+
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
   const gamePageElem = containerElem.querySelector(".game");
@@ -44,22 +47,25 @@ export const View = function (containerElem) {
     }
   }
 
-  function getPlayerSettings(players) {
-    for (let i = 0; i < playerSettingElems.length; i++) {
+  function getPlayerSettings() {
+    const numberOfPlayers = playerSettingElems.length;
+    const players = PlayerFactory().createMultiple(numberOfPlayers);
+    for (let i = 0; i < numberOfPlayers; i++) {
       players[i].type = playerSettingElems[i].type.value;
       players[i].username = playerSettingElems[i].username.value;
       gameboardColors.playerArray[i] = playerSettingElems[i].color.value;
     }
+    return players;
   }
 
   function destroyGameboard() {
     gameboardElem.innerHTML = "";
   }
 
-  function createGameBoard(gameboard) {
+  function createGameBoard(board) {
     destroyGameboard();
-    for (var i = 0; i < gameboard.getNumberRows(); i++) {
-      for (var j = 0; j < gameboard.getNumberCols(); j++) {
+    for (var i = 0; i < matrix.getNumberRows(board); i++) {
+      for (var j = 0; j < matrix.getNumberCols(board); j++) {
         const elemDiv = document.createElement("div");
         elemDiv.classList.add("cell");
         elemDiv.dataset.row = `${i}`;
@@ -69,22 +75,21 @@ export const View = function (containerElem) {
     }
   }
 
-  function updateGameState(gameboard, state) {
-    _updateGameboard(gameboard);
+  function updateGameState(state) {
+    _updateGameboard(state.board);
     _updateStatusText("TESTING");
   }
 
-  function _updateGameboard(gameboard) {
+  function _updateGameboard(board) {
     let colorArray = [gameboardColors.emptyCell];
     gameboardColors.playerArray.forEach((color) => {
       colorArray.push(color);
     });
-    const boardState = gameboard.getState();
-    for (var i = 0; i < gameboard.getNumberRows(); i++) {
-      for (var j = 0; j < gameboard.getNumberCols(); j++) {
+    for (var i = 0; i < matrix.getNumberRows(board); i++) {
+      for (var j = 0; j < matrix.getNumberCols(board); j++) {
         gameboardElem.children[
-          j + i * gameboard.getNumberCols()
-        ].style.backgroundColor = colorArray[boardState[i][j]];
+          j + i * matrix.getNumberCols(board)
+        ].style.backgroundColor = colorArray[matrix.getCell(board, i, j)];
       }
     }
   }
