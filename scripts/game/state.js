@@ -1,35 +1,34 @@
 import * as matrix from "./matrix.js";
 import * as turnOrder from "./turn.js";
+import * as matchResult from "./result.js";
 import { PlayerFactory } from "./players.js";
 
 export const State = function () {
-  let gameComplete;
-  let gameDraw;
-  let winnerPlayerIndex;
-
+  let result;
   let board;
   let players;
   let turn;
 
   return {
-    gameComplete,
-    gameDraw,
-    winnerPlayerIndex,
+    result,
     turn,
     board,
     players,
   };
 };
 
-export const init = function () {
-  const playerFactory = PlayerFactory();
+export const generate = function () {
   const state = State();
+  const playerFactory = PlayerFactory();
   state.board = matrix.generate(6, 7);
   state.players = playerFactory.createMultiple(2);
   state.turn = turnOrder.generate(state.players.length);
-  turnOrder.randomize(state.turn);
-  state.gameComplete = false;
-  state.gameDraw = false;
-  state.winnerPlayerIndex = null;
+  state.result = matchResult.generate();
   return state;
+};
+
+export const reset = function (state) {
+  matrix.setAll(state.board, 0);
+  turnOrder.randomize(state.turn);
+  matchResult.reset(state.result);
 };
