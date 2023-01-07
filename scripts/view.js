@@ -1,5 +1,5 @@
 import { PlayerFactory } from "./game/players.js";
-import { matrix } from "./game/matrix.js";
+import * as matrix from "./game/matrix.js";
 import { turn } from "./game/turn.js";
 
 export const View = function (containerElem) {

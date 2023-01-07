@@ -1,4 +1,4 @@
-import { matrix } from "./matrix.js";
+import * as matrix from "./matrix.js";
 
 export const State = function () {
   let gameComplete = false;
