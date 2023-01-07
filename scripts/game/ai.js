@@ -1,7 +1,7 @@
 import * as matrix from "./matrix.js";
 import { highestIndexOf } from "./helper.js";
 import { turn } from "./turn.js";
-import { connect4 as rules } from "./rules.js";
+import * as rules from "./connect4.js";
 
 function getAvaliableMoves(board) {
   const options = [];

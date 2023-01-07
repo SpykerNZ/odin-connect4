@@ -1,6 +1,6 @@
 import * as matrix from "./game/matrix.js";
 import { highestIndexOf } from "./game/helper.js";
-import { connect4 as rules } from "./game/rules.js";
+import * as rules from "./game/connect4.js";
 import { PlayerFactory } from "./game/players.js";
 import { turn } from "./game/turn.js";
 import { easyAI } from "./game/ai.js";
