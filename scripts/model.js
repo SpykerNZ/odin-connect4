@@ -2,6 +2,7 @@ import { matrix, highestIndexOf } from "./game/matrix.js";
 import { connect4 as rules } from "./game/rules.js";
 import { PlayerFactory } from "./game/players.js";
 import { turn } from "./game/turn.js";
+import { easyAI } from "./game/ai.js";
 import { State } from "./game/state.js";
 
 export const Model = function () {
@@ -34,6 +35,7 @@ export const Model = function () {
     } else {
       turn.nextPlayer(state);
     }
+    _checkAi();
   }
 
   function resetGame() {
@@ -42,6 +44,15 @@ export const Model = function () {
     state.winnerPlayerIndex = null;
     state.gameDraw = false;
     turn.randomize(state);
+    _checkAi();
+  }
+
+  function _checkAi() {
+    const player = turn.getActivePlayer(state);
+    if (player.type === "ai-easy") {
+      const move = easyAI(state);
+      executeMove(move.row, move.col);
+    }
   }
 
   return {
