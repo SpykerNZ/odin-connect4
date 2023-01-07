@@ -12,28 +12,35 @@ export const Model = function () {
   state.players = _playerFactory.createMultiple(2);
 
   function executeMove(row, col) {
-    const player = turn.getActivePlayer(state);
-    const row_ = highestIndexOf(matrix.getCol(state.board, col), 0);
-
-    if (rules.checkValidMove(state.board, player.id, row_, col)) {
-      matrix.setCell(state.board, player.id, row_, col);
-    } else {
-      console.log("invalid!");
+    if (state.gameComplete) {
       return;
     }
 
+    const player = turn.getActivePlayer(state);
+    const row_ = highestIndexOf(matrix.getCol(state.board, col), 0);
+
+    if (!rules.checkValidMove(state.board, player.id, row_, col)) {
+      return;
+    }
+
+    matrix.setCell(state.board, player.id, row_, col);
+
     if (rules.checkMoveWinCondition(state.board, player.id, row_, col)) {
-      console.log("winner!");
+      state.winnerPlayerIndex = state.activePlayerIndex;
+      state.gameComplete = true;
     } else if (rules.checkDrawCondition(state.board)) {
-      console.log("draw!");
+      state.gameComplete = true;
+      state.gameDraw = true;
     } else {
-      console.log("next player turn");
       turn.nextPlayer(state);
     }
   }
 
   function resetGame() {
-    state.reset();
+    matrix.setAll(state.board, 0);
+    state.gameComplete = false;
+    state.winnerPlayerIndex = null;
+    state.gameDraw = false;
     turn.randomize(state);
   }
 

@@ -1,18 +1,18 @@
 import { matrix } from "./matrix.js";
 
 export const State = function () {
+  let gameComplete = false;
+  let gameDraw = false;
+  let winnerPlayerIndex = null;
   let activePlayerIndex = 0;
   let board = matrix.generate(6, 7);
   let players = [];
 
-  function reset() {
-    matrix.setAll(board, 0);
-  }
-
   return {
+    gameComplete,
+    winnerPlayerIndex,
     activePlayerIndex,
     board,
     players,
-    reset,
   };
 };

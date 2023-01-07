@@ -79,9 +79,23 @@ export const View = function (containerElem) {
   function updateGameState(state) {
     _updateGameboard(state.board);
     const player = turn.getActivePlayer(state);
-    statusTextElem.textContent = `${player.username}'s Turn!`;
-    statusTextElem.style.backgroundColor =
-      gameColors.playerArray[state.activePlayerIndex];
+
+    let statusText;
+    let statusBgColor;
+    if (state.gameComplete) {
+      if (state.gameDraw) {
+        statusText = "Game Draw!";
+        statusBgColor = "transparent";
+      } else {
+        statusText = `${player.username}'s Wins!`;
+        statusBgColor = gameColors.playerArray[state.activePlayerIndex];
+      }
+    } else {
+      statusText = `${player.username}'s Turn!`;
+      statusBgColor = gameColors.playerArray[state.activePlayerIndex];
+    }
+    statusTextElem.textContent = statusText;
+    statusTextElem.style.backgroundColor = statusBgColor;
   }
 
   function _updateGameboard(board) {

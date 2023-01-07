@@ -10,6 +10,7 @@ export const Controller = function (model, view) {
     view.createGameBoard(model.state.board);
     view.bindGameboard(handleGameboardCellPressed);
     view.updateGameState(model.state);
+    model.resetGame();
     view.changeToGamePage();
   }
 
