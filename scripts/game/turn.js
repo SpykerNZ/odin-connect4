@@ -3,8 +3,8 @@ export const turn = (function () {
     return state.players[state.activePlayerIndex];
   }
 
-  function randomize(numberOfPlayers) {
-    return Math.floor(Math.random() * numberOfPlayers);
+  function randomize(state) {
+    state.activePlayerIndex = Math.floor(Math.random() * state.players.length);
   }
 
   function nextPlayer(state) {

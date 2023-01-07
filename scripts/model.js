@@ -34,6 +34,7 @@ export const Model = function () {
 
   function resetGame() {
     state.reset();
+    turn.randomize(state);
   }
 
   return {
