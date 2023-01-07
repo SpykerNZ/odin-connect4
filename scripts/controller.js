@@ -26,7 +26,6 @@ export const Controller = function (model, view) {
   }
 
   function handleGameboardCellPressed(row, col) {
-    console.log(`row: ${row} col: ${col}`);
     model.executeMove(row, col);
     view.updateGameState(model.state);
   }

@@ -17,7 +17,6 @@ export const connect4 = (function () {
 
     for (const key in directions) {
       if (_isConsecutive(directions[key], value, consecutiveCount)) {
-        console.log(key);
         return true;
       }
     }
