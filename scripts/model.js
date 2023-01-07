@@ -44,7 +44,11 @@ export const Model = function () {
   }
 
   function _checkAi() {
-    const player = turnOrder.getActivePlayerIndex(state.turn, state.players);
+    const playerIndex = turnOrder.getActivePlayerIndex(
+      state.turn,
+      state.players
+    );
+    const player = state.players[playerIndex];
     if (player.type === "ai-easy") {
       const move = easyAI(state);
       executeMove(move.row, move.col);

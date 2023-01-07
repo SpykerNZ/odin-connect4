@@ -11,7 +11,6 @@ export function generate(playerCount) {
 
 export function randomize(turn) {
   turn.order = shuffleArray(turn.order);
-  console.table(turn.order);
 }
 
 export function getActivePlayerIndex(turn) {
