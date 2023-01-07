@@ -1,6 +1,6 @@
 import { PlayerFactory } from "./game/players.js";
 import * as matrix from "./game/matrix.js";
-import { turn } from "./game/turn.js";
+import * as turn from "./game/turn.js";
 
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
