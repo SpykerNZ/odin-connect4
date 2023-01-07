@@ -18,6 +18,7 @@ export const View = function (containerElem) {
   const endButtonElem = gamePageElem.querySelector("button.end");
   const restartButtonElem = gamePageElem.querySelector("button.restart");
   const gameboardElem = gamePageElem.querySelector(".gameboard");
+  const statusTextElem = gamePageElem.querySelector(".status-text");
 
   const gameboardColors = {
     emptyCell: "#FFFFFF",
@@ -66,10 +67,14 @@ export const View = function (containerElem) {
         gameboardElem.appendChild(elemDiv);
       }
     }
-    updateGameboard(gameboard);
   }
 
-  function updateGameboard(gameboard) {
+  function updateGameState(gameboard, state) {
+    _updateGameboard(gameboard);
+    _updateStatusText("TESTING");
+  }
+
+  function _updateGameboard(gameboard) {
     let colorArray = [gameboardColors.emptyCell];
     gameboardColors.playerArray.forEach((color) => {
       colorArray.push(color);
@@ -82,6 +87,10 @@ export const View = function (containerElem) {
         ].style.backgroundColor = colorArray[boardState[i][j]];
       }
     }
+  }
+
+  function _updateStatusText(str) {
+    statusTextElem.textContent = str;
   }
 
   function bindStartGame(handler) {
@@ -119,7 +128,7 @@ export const View = function (containerElem) {
     getPlayerSettings,
     createGameBoard,
     destroyGameboard,
-    updateGameboard,
+    updateGameState,
     bindStartGame,
     bindEndGame,
     bindRestartGame,
