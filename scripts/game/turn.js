@@ -1,12 +1,22 @@
-export function getActivePlayer(state) {
-  return state.players[state.activePlayerIndex];
+import { shuffleArray } from "./helper.js";
+
+const TurnOrder = (order) => {
+  const number = 0;
+  return { order, number };
+};
+
+export function generate(playerCount) {
+  return TurnOrder([...Array(playerCount).keys()]);
 }
 
-export function randomize(state) {
-  state.activePlayerIndex = Math.floor(Math.random() * state.players.length);
+export function randomize(turn) {
+  shuffleArray(turn.order);
 }
 
-export function nextPlayer(state) {
-  state.activePlayerIndex =
-    (state.activePlayerIndex + 1) % state.players.length;
+export function getActivePlayer(turn, players) {
+  return players[turn.number];
+}
+
+export function nextPlayer(turn) {
+  turn.number = (turn.number + 1) % turn.order.length;
 }

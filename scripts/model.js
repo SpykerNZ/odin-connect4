@@ -1,26 +1,20 @@
 import * as matrix from "./game/matrix.js";
 import * as rules from "./game/rules.js";
-import * as turn from "./game/turn.js";
-import { highestIndexOf } from "./game/helper.js";
-import { PlayerFactory } from "./game/players.js";
-
+import * as turnOrder from "./game/turn.js";
+import * as gameState from "./game/state.js";
+import { highestValueIndexInArray } from "./game/helper.js";
 import { easyAI } from "./game/ai.js";
-import { State } from "./game/state.js";
 
 export const Model = function () {
-  const _playerFactory = PlayerFactory();
-
-  const state = State();
-
-  state.players = _playerFactory.createMultiple(2);
+  const state = gameState.init();
 
   function executeMove(row, col) {
     if (state.gameComplete) {
       return;
     }
 
-    const player = turn.getActivePlayer(state);
-    const row_ = highestIndexOf(matrix.getCol(state.board, col), 0);
+    const player = turnOrder.getActivePlayer(state.turn, state.players);
+    const row_ = highestValueIndexInArray(matrix.getCol(state.board, col), 0);
 
     if (!rules.checkValidMove(state.board, player.id, row_, col)) {
       return;
@@ -29,13 +23,16 @@ export const Model = function () {
     matrix.setCell(state.board, player.id, row_, col);
 
     if (rules.checkMoveWinCondition(state.board, player.id, row_, col)) {
-      state.winnerPlayerIndex = state.activePlayerIndex;
+      state.winnerPlayerIndex = turnOrder.getActivePlayer(
+        state.turn,
+        state.players
+      );
       state.gameComplete = true;
     } else if (rules.checkDrawCondition(state.board)) {
       state.gameComplete = true;
       state.gameDraw = true;
     } else {
-      turn.nextPlayer(state);
+      turnOrder.nextPlayer(state.turn);
     }
     _checkAi();
   }
@@ -45,12 +42,11 @@ export const Model = function () {
     state.gameComplete = false;
     state.winnerPlayerIndex = null;
     state.gameDraw = false;
-    turn.randomize(state);
     _checkAi();
   }
 
   function _checkAi() {
-    const player = turn.getActivePlayer(state);
+    const player = turnOrder.getActivePlayer(state.turn, state.players);
     if (player.type === "ai-easy") {
       const move = easyAI(state);
       executeMove(move.row, move.col);

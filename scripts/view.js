@@ -1,6 +1,6 @@
 import { PlayerFactory } from "./game/players.js";
 import * as matrix from "./game/matrix.js";
-import * as turn from "./game/turn.js";
+import * as turnOrder from "./game/turn.js";
 
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
@@ -78,7 +78,7 @@ export const View = function (containerElem) {
 
   function updateGameState(state) {
     _updateGameboard(state.board);
-    const player = turn.getActivePlayer(state);
+    const player = turnOrder.getActivePlayer(state.turn, state.players);
 
     let statusText;
     let statusBgColor;
