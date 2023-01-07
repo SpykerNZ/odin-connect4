@@ -1,5 +1,6 @@
 import { PlayerFactory } from "./game/players.js";
 import { matrix } from "./game/matrix.js";
+import { turn } from "./game/turn.js";
 
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
@@ -23,7 +24,7 @@ export const View = function (containerElem) {
   const gameboardElem = gamePageElem.querySelector(".gameboard");
   const statusTextElem = gamePageElem.querySelector(".status-text");
 
-  const gameboardColors = {
+  const gameColors = {
     emptyCell: "#FFFFFF",
     background: "#000000",
     playerArray: ["#FFFF00", "#FF0000"],
@@ -43,7 +44,7 @@ export const View = function (containerElem) {
     for (let i = 0; i < playerSettingElems.length; i++) {
       playerSettingElems[i].type.value = players[i].type;
       playerSettingElems[i].username.value = players[i].username;
-      playerSettingElems[i].color.value = gameboardColors.playerArray[i];
+      playerSettingElems[i].color.value = gameColors.playerArray[i];
     }
   }
 
@@ -53,7 +54,7 @@ export const View = function (containerElem) {
     for (let i = 0; i < numberOfPlayers; i++) {
       players[i].type = playerSettingElems[i].type.value;
       players[i].username = playerSettingElems[i].username.value;
-      gameboardColors.playerArray[i] = playerSettingElems[i].color.value;
+      gameColors.playerArray[i] = playerSettingElems[i].color.value;
     }
     return players;
   }
@@ -77,12 +78,15 @@ export const View = function (containerElem) {
 
   function updateGameState(state) {
     _updateGameboard(state.board);
-    _updateStatusText("TESTING");
+    const player = turn.getActivePlayer(state);
+    statusTextElem.textContent = `${player.username}'s Turn!`;
+    statusTextElem.style.backgroundColor =
+      gameColors.playerArray[state.activePlayerIndex];
   }
 
   function _updateGameboard(board) {
-    let colorArray = [gameboardColors.emptyCell];
-    gameboardColors.playerArray.forEach((color) => {
+    let colorArray = [gameColors.emptyCell];
+    gameColors.playerArray.forEach((color) => {
       colorArray.push(color);
     });
     for (var i = 0; i < matrix.getNumberRows(board); i++) {
@@ -92,10 +96,6 @@ export const View = function (containerElem) {
         ].style.backgroundColor = colorArray[matrix.getCell(board, i, j)];
       }
     }
-  }
-
-  function _updateStatusText(str) {
-    statusTextElem.textContent = str;
   }
 
   function bindStartGame(handler) {
