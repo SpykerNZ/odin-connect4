@@ -3,10 +3,14 @@ export const Controller = function (model, view) {
   view.bindEndGame(handleEndGame);
   view.bindRestartGame(handleRestartGame);
 
+  view.setPlayerSettings(model.players);
+
   function handleStartGame() {
-    view.changeToGamePage();
+    view.getPlayerSettings(model.players);
     view.createGameBoard(model.gameboard);
     view.bindGameboard(handleGameboardCellPressed);
+    view.changeToGamePage();
+    // get the info from the view
     // TODO - modify the players object based on the setup
   }
 

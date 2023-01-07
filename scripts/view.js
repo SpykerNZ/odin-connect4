@@ -1,12 +1,22 @@
-export const View = function () {
-  const containerElem = document.querySelector(".container");
+export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
   const gamePageElem = containerElem.querySelector(".game");
 
+  const playerElems = setupPageElem.querySelectorAll(".player");
+
+  const playerSettingElems = [];
+  for (let i = 0; i < playerElems.length; i++) {
+    playerSettingElems.push({
+      type: playerElems[i].querySelector("select.type"),
+      username: playerElems[i].querySelector("input.name"),
+      color: playerElems[i].querySelector("input.color"),
+    });
+  }
+
   const startButtonElem = setupPageElem.querySelector("button.start");
+
   const endButtonElem = gamePageElem.querySelector("button.end");
   const restartButtonElem = gamePageElem.querySelector("button.restart");
-
   const gameboardElem = gamePageElem.querySelector(".gameboard");
 
   const gameboardColors = {
@@ -23,6 +33,22 @@ export const View = function () {
   function changeToGamePage() {
     setupPageElem.style.display = "none";
     gamePageElem.style.display = "flex";
+  }
+
+  function setPlayerSettings(players) {
+    for (let i = 0; i < playerSettingElems.length; i++) {
+      playerSettingElems[i].type.value = players[i].type;
+      playerSettingElems[i].username.value = players[i].username;
+      playerSettingElems[i].color.value = gameboardColors.playerArray[i];
+    }
+  }
+
+  function getPlayerSettings(players) {
+    for (let i = 0; i < playerSettingElems.length; i++) {
+      players[i].type = playerSettingElems[i].type.value;
+      players[i].username = playerSettingElems[i].username.value;
+      gameboardColors.playerArray[i] = playerSettingElems[i].color.value;
+    }
   }
 
   function destroyGameboard() {
@@ -89,6 +115,8 @@ export const View = function () {
   return {
     changeToGamePage,
     changeToSetupPage,
+    setPlayerSettings,
+    getPlayerSettings,
     createGameBoard,
     destroyGameboard,
     updateGameboard,
