@@ -14,13 +14,10 @@ export const Model = function () {
       return;
     }
 
-    const playerIndex = turnOrder.getActivePlayerIndex(
-      state.turn,
-      state.players
-    );
+    const playerIndex = turnOrder.getActivePlayerIndex(state.turn);
     const player = state.players[playerIndex];
     const row_ = highestValueIndexInArray(matrix.getCol(state.board, col), 0);
-
+    console.log(player);
     if (!rules.checkValidMove(state.board, player.id, row_, col)) {
       return;
     }
@@ -40,17 +37,16 @@ export const Model = function () {
 
   function resetGame() {
     gameState.reset(state);
+    console.log(state);
     _checkAi();
   }
 
   function _checkAi() {
-    const playerIndex = turnOrder.getActivePlayerIndex(
-      state.turn,
-      state.players
-    );
+    const playerIndex = turnOrder.getActivePlayerIndex(state.turn);
     const player = state.players[playerIndex];
     if (player.type === "ai-easy") {
       const move = easyAI(state);
+      console.log("ai move!");
       executeMove(move.row, move.col);
     }
   }
