@@ -72,7 +72,16 @@ body {
 }
 
 button.start {
-  width: 100px;
+  margin-top: 20px;
+  width: 200px;
+  height: 80px;
+  border-radius: 30px;
+  background-color: lightgreen;
+  font-family: "ITCAvantGardeStd";
+}
+
+button.start:hover {
+  background-color: greenyellow;
 }
 
 .game {
