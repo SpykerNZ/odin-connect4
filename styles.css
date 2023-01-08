@@ -1,11 +1,22 @@
 @import url("reset.css");
 
+@font-face {
+  font-family: "ITCAvantGardeStd";
+  font-style: normal;
+  font-weight: 400;
+  src: local(""),
+    url("./fonts/itcavantgardestd-bkobl-webfont.woff2") format("woff2"),
+    /* Super Modern Browsers */
+      url("./fonts/itcavantgardestd-bkobl-webfont.woff") format("woff"); /* Modern Browsers */
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  background-color: lightgray;
+  background-color: #cbd5e1;
+  font-family: "ITCAvantGardeStd", sans-serif;
 }
 
 /* div {
@@ -16,7 +27,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: lightblue;
+  background-color: #0284c7;
   height: 100px;
 }
 
@@ -36,10 +47,16 @@ body {
   font-size: 30px;
 }
 
+.players {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .player {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .setting {
@@ -48,7 +65,9 @@ body {
   width: 200px;
 }
 
-.setting > input {
+.setting > input,
+.setting > select {
+  height: 40px;
   width: 100%;
 }
 
@@ -81,6 +100,7 @@ button.start {
   padding: 10px;
   grid-template-columns: repeat(7, 1fr);
   background-color: darkblue;
+  border-radius: 10px;
 }
 
 .cell {
