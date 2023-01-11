@@ -27,7 +27,6 @@ export const View = function (containerElem) {
   const gameColors = {
     emptyCell: "#FFFFFF",
     background: "#000000",
-    playerArray: ["#FFFF00", "#FF0000"],
   };
 
   function changeToSetupPage() {
@@ -44,7 +43,7 @@ export const View = function (containerElem) {
     for (let i = 0; i < playerSettingElems.length; i++) {
       playerSettingElems[i].type.value = players[i].type;
       playerSettingElems[i].username.value = players[i].username;
-      playerSettingElems[i].color.value = gameColors.playerArray[i];
+      playerSettingElems[i].color.value = players[i].color;
     }
   }
 
@@ -54,7 +53,7 @@ export const View = function (containerElem) {
     for (let i = 0; i < numberOfPlayers; i++) {
       players[i].type = playerSettingElems[i].type.value;
       players[i].username = playerSettingElems[i].username.value;
-      gameColors.playerArray[i] = playerSettingElems[i].color.value;
+      players[i].color = playerSettingElems[i].color.value;
     }
     return players;
   }
@@ -77,34 +76,36 @@ export const View = function (containerElem) {
   }
 
   function updateGameState(state) {
-    _updateGameboard(state.board);
+    _updateGameboard(state);
     const playerIndex = turnOrder.getActivePlayerIndex(state.turn);
     let statusText;
     let statusBgColor;
     if (state.result.win) {
       statusText = `${state.players[playerIndex].username}'s Wins!`;
-      statusBgColor = gameColors.playerArray[state.result.winningPlayerIndex];
+      statusBgColor = state.players[playerIndex].color;
     } else if (state.result.draw) {
       statusText = "Game Draw!";
       statusBgColor = "transparent";
     } else {
       statusText = `${state.players[playerIndex].username}'s Turn!`;
-      statusBgColor = gameColors.playerArray[playerIndex];
+      statusBgColor = state.players[playerIndex].color;
     }
     statusTextElem.textContent = statusText;
     statusTextElem.style.backgroundColor = statusBgColor;
   }
 
-  function _updateGameboard(board) {
+  function _updateGameboard(state) {
     let colorArray = [gameColors.emptyCell];
-    gameColors.playerArray.forEach((color) => {
-      colorArray.push(color);
+
+    state.players.forEach((player) => {
+      colorArray.push(player.color);
     });
-    for (var i = 0; i < matrix.getNumberRows(board); i++) {
-      for (var j = 0; j < matrix.getNumberCols(board); j++) {
+
+    for (var i = 0; i < matrix.getNumberRows(state.board); i++) {
+      for (var j = 0; j < matrix.getNumberCols(state.board); j++) {
         gameboardElem.children[
-          j + i * matrix.getNumberCols(board)
-        ].style.backgroundColor = colorArray[matrix.getCell(board, i, j)];
+          j + i * matrix.getNumberCols(state.board)
+        ].style.backgroundColor = colorArray[matrix.getCell(state.board, i, j)];
       }
     }
   }

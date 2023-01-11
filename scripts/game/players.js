@@ -1,20 +1,25 @@
-export const Player = (username, type, id) => {
-  return { username, type, id };
+export const Player = (username, color, type, id) => {
+  return { username, color, type, id };
 };
 
 export const PlayerFactory = () => {
   let _id = 1;
   const defaultUsername = "Player";
   const defaultType = "human";
+  const defaultColor = ["#FF0000", "#FFFF00"];
 
-  function create(username, type) {
+  function create(username, color, type) {
     if (!username) {
       username = defaultUsername + ` ${_id}`;
+    }
+    if (!color) {
+      color = defaultColor[_id % defaultColor.length];
     }
     if (!type) {
       type = defaultType;
     }
-    return Player(username, type, _id++);
+    
+    return Player(username, color, type, _id++);
   }
 
   function createMultiple(n) {
