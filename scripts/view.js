@@ -1,4 +1,4 @@
-import { PlayerFactory } from "./models/players.js";
+import { PlayersFactory } from "./models/players.js";
 import * as matrix from "./functions/matrix.js";
 
 export const View = function (containerElem) {
@@ -33,19 +33,19 @@ export const View = function (containerElem) {
 
   function setPlayerSettings(players) {
     for (let i = 0; i < playerSettingElems.length; i++) {
-      playerSettingElems[i].type.value = players[i].type;
-      playerSettingElems[i].username.value = players[i].username;
-      playerSettingElems[i].color.value = players[i].color;
+      playerSettingElems[i].type.value = players.getByIndex(i).type;
+      playerSettingElems[i].username.value = players.getByIndex(i).username;
+      playerSettingElems[i].color.value = players.getByIndex(i).color;
     }
   }
 
   function getPlayerSettings() {
     const numberOfPlayers = playerSettingElems.length;
-    const players = PlayerFactory().createMultiple(numberOfPlayers);
+    const players = PlayersFactory().create(numberOfPlayers);
     for (let i = 0; i < numberOfPlayers; i++) {
-      players[i].type = playerSettingElems[i].type.value;
-      players[i].username = playerSettingElems[i].username.value;
-      players[i].color = playerSettingElems[i].color.value;
+      players.getByIndex(i).type = playerSettingElems[i].type.value;
+      players.getByIndex(i).username = playerSettingElems[i].username.value;
+      players.getByIndex(i).color = playerSettingElems[i].color.value;
     }
     return players;
   }
@@ -68,16 +68,17 @@ export const View = function (containerElem) {
   }
 
   function updateGameboard(board, players) {
-    const colors = ["#FFFFFF"];
-    for (let i = 0; i < players.length; i++) {
-      colors.push(players[i].color);
-    }
+    let color = null;
+
     for (var i = 0; i < matrix.getNumberRows(board); i++) {
       for (var j = 0; j < matrix.getNumberCols(board); j++) {
         const cellId = matrix.getCell(board, i, j);
+        cellId === 0
+          ? (color = "#FFFFFF")
+          : (color = players.getById(cellId).color);
         gameboardElem.children[
           j + i * matrix.getNumberCols(board)
-        ].style.backgroundColor = colors[cellId];
+        ].style.backgroundColor = color;
       }
     }
   }

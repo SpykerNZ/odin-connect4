@@ -22,12 +22,66 @@ export const PlayerFactory = () => {
     return Player(username, color, type, _id++);
   }
 
-  function createMultiple(n) {
-    const players = [];
-    for (let i = 0; i < n; i++) {
-      players.push(create());
+  return { create };
+};
+
+export const Players = () => {
+  const array = [];
+  let hash = {};
+
+  function getById(id) {
+    return array[hash[id.toString()]];
+  }
+
+  function getByIndex(index) {
+    return array[index];
+  }
+
+  function getIdArray() {
+    return Object.keys(hash);
+  }
+
+  function add(player) {
+    hash[player.id] = array.length;
+    array.push(player);
+  }
+
+  function remove(id) {
+    const strId = id.toString();
+    const index = hash[strId];
+    array.splice(index, 1);
+    delete hash[strId];
+    for (let key of Object.keys(hash)) {
+      if (hash[key] > index) {
+        hash[key]--;
+      }
+    }
+  }
+
+  function length() {
+    return array.length;
+  }
+
+  return {
+    getById,
+    getByIndex,
+    getIdArray,
+    add,
+    remove,
+    length,
+  };
+};
+
+export const PlayersFactory = () => {
+  function create(number) {
+    const playerFactory = PlayerFactory();
+    const players = Players();
+    for (let i = 0; i < number; i++) {
+      players.add(playerFactory.create());
     }
     return players;
   }
-  return { create, createMultiple };
+  return {
+    create,
+  };
 };

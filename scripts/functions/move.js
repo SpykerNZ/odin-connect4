@@ -17,7 +17,6 @@ export function executeMove(match, row, col) {
   }
 
   matrix.setCell(match.board, player.id, row_, col);
-  console.log(`player: ${player.id} row: ${row_} col: ${col}`);
 
   if (rules.checkMoveWinCondition(match.board, player.id, row_, col)) {
     match.result.win = true;
@@ -33,7 +32,6 @@ export function checkAi(match) {
   const player = getActivePlayer(match.turn, match.players);
   if (player.type === "ai-easy") {
     const move = easyAI(match);
-    console.log("ai move!");
     executeMove(match, move.row, move.col);
   }
 }

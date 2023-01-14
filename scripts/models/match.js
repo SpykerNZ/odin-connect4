@@ -3,7 +3,7 @@ export function MatchFactory(board, players) {
 }
 
 export const Match = function (board, players) {
-  let turn = Turn([...Array(players.length).keys()]);
+  let turn = Turn(players.getIdArray());
   let result = Result();
   return {
     board,

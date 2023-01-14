@@ -1,7 +1,7 @@
 import { shuffleArray } from "./helper.js";
 
 export function getActivePlayer(turn, players) {
-  return players[turn.order[turn.number]];
+  return players.getById(turn.order[turn.number]);
 }
 
 export function randomize(turn) {
