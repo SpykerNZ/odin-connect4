@@ -1,4 +1,4 @@
-export const Setup = function (players, colorScheme) {
+export const Setup = function (players) {
   let board = {
     width: 6,
     height: 7,
@@ -7,6 +7,5 @@ export const Setup = function (players, colorScheme) {
   return {
     board,
     players,
-    colorScheme,
   };
 };

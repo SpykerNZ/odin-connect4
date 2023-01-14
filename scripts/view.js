@@ -67,12 +67,17 @@ export const View = function (containerElem) {
     }
   }
 
-  function updateGameboard(board) {
+  function updateGameboard(board, players) {
+    const colors = ["#FFFFFF"];
+    for (let i = 0; i < players.length; i++) {
+      colors.push(players[i].color);
+    }
     for (var i = 0; i < matrix.getNumberRows(board); i++) {
       for (var j = 0; j < matrix.getNumberCols(board); j++) {
+        const cellId = matrix.getCell(board, i, j);
         gameboardElem.children[
           j + i * matrix.getNumberCols(board)
-        ].dataset.playerId = matrix.getCell(board, i, j);
+        ].style.backgroundColor = colors[cellId];
       }
     }
   }
@@ -83,10 +88,6 @@ export const View = function (containerElem) {
 
   function setStatusColor(bgColor) {
     statusTextElem.style.backgroundColor = bgColor;
-  }
-
-  function setColorScheme(colorScheme) {
-    // TODO - Set color scheme here!
   }
 
   function bindStartGame(handler) {
@@ -127,7 +128,6 @@ export const View = function (containerElem) {
     updateGameboard,
     setStatusText,
     setStatusColor,
-    setColorScheme,
     bindStartGame,
     bindEndGame,
     bindRestartGame,

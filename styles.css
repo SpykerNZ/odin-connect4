@@ -10,11 +10,6 @@
       url("./fonts/itcavantgardestd-bkobl-webfont.woff") format("woff"); /* Modern Browsers */
 }
 
-:root {
-  --colorP1: yellow;
-  --colorP2: red;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -123,14 +118,6 @@ button.start:hover {
   border: 1px solid blue;
   border-radius: 30px;
   background-color: black;
-}
-
-.cell[data-player-id="1"] {
-  background-color: var(--colorP1);
-}
-
-.cell[data-player-id="2"] {
-  background-color: var(--colorP2);
 }
 
 .gameover {

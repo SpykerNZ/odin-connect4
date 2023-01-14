@@ -11,7 +11,6 @@ export const Controller = function (model, view) {
 
   // Load the model settings into the view
   view.setPlayerSettings(model.setup.players);
-  view.setColorScheme(model.setup.colorScheme);
 
   function handleStartMatch() {
     model.setup.players = view.getPlayerSettings();
@@ -46,6 +45,6 @@ export const Controller = function (model, view) {
   function updateMatchState(match) {
     view.setStatusText(display.getMatchStatusString(match));
     view.setStatusColor(display.getMatchStatusColor(match));
-    view.updateGameboard(match.board);
+    view.updateGameboard(match.board, match.players);
   }
 };
