@@ -1,6 +1,4 @@
 import * as matrix from "./matrix.js";
-import * as turn from "./turn.js";
-import * as rules from "./rules.js";
 import { highestValueIndexInArray } from "./helper.js";
 
 function getAvaliableMoves(board) {

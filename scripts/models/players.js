@@ -6,19 +6,19 @@ export const PlayerFactory = () => {
   let _id = 1;
   const defaultUsername = "Player";
   const defaultType = "human";
-  const defaultColor = ["#FF0000", "#FFFF00"];
+  const defaultColors = ["#FF0000", "#FFFF00"];
 
   function create(username, color, type) {
     if (!username) {
       username = defaultUsername + ` ${_id}`;
     }
     if (!color) {
-      color = defaultColor[_id % defaultColor.length];
+      color = defaultColors[_id % defaultColors.length];
     }
     if (!type) {
       type = defaultType;
     }
-    
+
     return Player(username, color, type, _id++);
   }
 

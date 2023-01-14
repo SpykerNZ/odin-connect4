@@ -1,11 +1,9 @@
-import { PlayerFactory } from "./game/players.js";
-import * as matrix from "./game/matrix.js";
-import * as turnOrder from "./game/turn.js";
+import { PlayerFactory } from "./models/players.js";
+import * as matrix from "./functions/matrix.js";
 
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
   const gamePageElem = containerElem.querySelector(".game");
-
   const playerElems = setupPageElem.querySelectorAll(".player");
 
   const playerSettingElems = [];
@@ -18,16 +16,10 @@ export const View = function (containerElem) {
   }
 
   const startButtonElem = setupPageElem.querySelector("button.start");
-
   const endButtonElem = gamePageElem.querySelector("button.end");
   const restartButtonElem = gamePageElem.querySelector("button.restart");
   const gameboardElem = gamePageElem.querySelector(".gameboard");
   const statusTextElem = gamePageElem.querySelector(".status-text");
-
-  const gameColors = {
-    emptyCell: "#FFFFFF",
-    background: "#000000",
-  };
 
   function changeToSetupPage() {
     setupPageElem.style.display = "flex";
@@ -75,39 +67,26 @@ export const View = function (containerElem) {
     }
   }
 
-  function updateGameState(state) {
-    _updateGameboard(state);
-    const playerIndex = turnOrder.getActivePlayerIndex(state.turn);
-    let statusText;
-    let statusBgColor;
-    if (state.result.win) {
-      statusText = `${state.players[playerIndex].username}'s Wins!`;
-      statusBgColor = state.players[playerIndex].color;
-    } else if (state.result.draw) {
-      statusText = "Game Draw!";
-      statusBgColor = "transparent";
-    } else {
-      statusText = `${state.players[playerIndex].username}'s Turn!`;
-      statusBgColor = state.players[playerIndex].color;
-    }
-    statusTextElem.textContent = statusText;
-    statusTextElem.style.backgroundColor = statusBgColor;
-  }
-
-  function _updateGameboard(state) {
-    let colorArray = [gameColors.emptyCell];
-
-    state.players.forEach((player) => {
-      colorArray.push(player.color);
-    });
-
-    for (var i = 0; i < matrix.getNumberRows(state.board); i++) {
-      for (var j = 0; j < matrix.getNumberCols(state.board); j++) {
+  function updateGameboard(board) {
+    for (var i = 0; i < matrix.getNumberRows(board); i++) {
+      for (var j = 0; j < matrix.getNumberCols(board); j++) {
         gameboardElem.children[
-          j + i * matrix.getNumberCols(state.board)
-        ].style.backgroundColor = colorArray[matrix.getCell(state.board, i, j)];
+          j + i * matrix.getNumberCols(board)
+        ].dataset.playerId = matrix.getCell(board, i, j);
       }
     }
+  }
+
+  function setStatusText(text) {
+    statusTextElem.textContent = text;
+  }
+
+  function setStatusColor(bgColor) {
+    statusTextElem.style.backgroundColor = bgColor;
+  }
+
+  function setColorScheme(colorScheme) {
+    // TODO - Set color scheme here!
   }
 
   function bindStartGame(handler) {
@@ -145,7 +124,10 @@ export const View = function (containerElem) {
     getPlayerSettings,
     createGameBoard,
     destroyGameboard,
-    updateGameState,
+    updateGameboard,
+    setStatusText,
+    setStatusColor,
+    setColorScheme,
     bindStartGame,
     bindEndGame,
     bindRestartGame,
