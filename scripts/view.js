@@ -1,11 +1,9 @@
-import { PlayerFactory } from "./game/players.js";
-import { matrix } from "./game/matrix.js";
-import { turn } from "./game/turn.js";
+import { PlayersFactory } from "./models/players.js";
+import * as matrix from "./functions/matrix.js";
 
 export const View = function (containerElem) {
   const setupPageElem = containerElem.querySelector(".setup");
   const gamePageElem = containerElem.querySelector(".game");
-
   const playerElems = setupPageElem.querySelectorAll(".player");
 
   const playerSettingElems = [];
@@ -18,17 +16,10 @@ export const View = function (containerElem) {
   }
 
   const startButtonElem = setupPageElem.querySelector("button.start");
-
   const endButtonElem = gamePageElem.querySelector("button.end");
   const restartButtonElem = gamePageElem.querySelector("button.restart");
   const gameboardElem = gamePageElem.querySelector(".gameboard");
   const statusTextElem = gamePageElem.querySelector(".status-text");
-
-  const gameColors = {
-    emptyCell: "#FFFFFF",
-    background: "#000000",
-    playerArray: ["#FFFF00", "#FF0000"],
-  };
 
   function changeToSetupPage() {
     setupPageElem.style.display = "flex";
@@ -42,19 +33,19 @@ export const View = function (containerElem) {
 
   function setPlayerSettings(players) {
     for (let i = 0; i < playerSettingElems.length; i++) {
-      playerSettingElems[i].type.value = players[i].type;
-      playerSettingElems[i].username.value = players[i].username;
-      playerSettingElems[i].color.value = gameColors.playerArray[i];
+      playerSettingElems[i].type.value = players.getByIndex(i).type;
+      playerSettingElems[i].username.value = players.getByIndex(i).username;
+      playerSettingElems[i].color.value = players.getByIndex(i).color;
     }
   }
 
   function getPlayerSettings() {
     const numberOfPlayers = playerSettingElems.length;
-    const players = PlayerFactory().createMultiple(numberOfPlayers);
+    const players = PlayersFactory().create(numberOfPlayers);
     for (let i = 0; i < numberOfPlayers; i++) {
-      players[i].type = playerSettingElems[i].type.value;
-      players[i].username = playerSettingElems[i].username.value;
-      gameColors.playerArray[i] = playerSettingElems[i].color.value;
+      players.getByIndex(i).type = playerSettingElems[i].type.value;
+      players.getByIndex(i).username = playerSettingElems[i].username.value;
+      players.getByIndex(i).color = playerSettingElems[i].color.value;
     }
     return players;
   }
@@ -76,40 +67,28 @@ export const View = function (containerElem) {
     }
   }
 
-  function updateGameState(state) {
-    _updateGameboard(state.board);
-    const player = turn.getActivePlayer(state);
+  function updateGameboard(board, players) {
+    let color = null;
 
-    let statusText;
-    let statusBgColor;
-    if (state.gameComplete) {
-      if (state.gameDraw) {
-        statusText = "Game Draw!";
-        statusBgColor = "transparent";
-      } else {
-        statusText = `${player.username}'s Wins!`;
-        statusBgColor = gameColors.playerArray[state.activePlayerIndex];
-      }
-    } else {
-      statusText = `${player.username}'s Turn!`;
-      statusBgColor = gameColors.playerArray[state.activePlayerIndex];
-    }
-    statusTextElem.textContent = statusText;
-    statusTextElem.style.backgroundColor = statusBgColor;
-  }
-
-  function _updateGameboard(board) {
-    let colorArray = [gameColors.emptyCell];
-    gameColors.playerArray.forEach((color) => {
-      colorArray.push(color);
-    });
     for (var i = 0; i < matrix.getNumberRows(board); i++) {
       for (var j = 0; j < matrix.getNumberCols(board); j++) {
+        const cellId = matrix.getCell(board, i, j);
+        cellId === 0
+          ? (color = "#FFFFFF")
+          : (color = players.getById(cellId).color);
         gameboardElem.children[
           j + i * matrix.getNumberCols(board)
-        ].style.backgroundColor = colorArray[matrix.getCell(board, i, j)];
+        ].style.backgroundColor = color;
       }
     }
+  }
+
+  function setStatusText(text) {
+    statusTextElem.textContent = text;
+  }
+
+  function setStatusColor(bgColor) {
+    statusTextElem.style.backgroundColor = bgColor;
   }
 
   function bindStartGame(handler) {
@@ -147,7 +126,9 @@ export const View = function (containerElem) {
     getPlayerSettings,
     createGameBoard,
     destroyGameboard,
-    updateGameState,
+    updateGameboard,
+    setStatusText,
+    setStatusColor,
     bindStartGame,
     bindEndGame,
     bindRestartGame,

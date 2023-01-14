@@ -1,32 +1,50 @@
+import { MatchFactory } from "./models/match.js";
+import { executeMove } from "./functions/move.js";
+import { resetMatch, startMatch } from "./functions/match.js";
+import * as display from "./functions/display.js";
+import * as matrix from "./functions/matrix.js";
+
 export const Controller = function (model, view) {
-  view.bindStartGame(handleStartGame);
-  view.bindEndGame(handleEndGame);
-  view.bindRestartGame(handleRestartGame);
+  view.bindStartGame(handleStartMatch);
+  view.bindEndGame(handleEndMatch);
+  view.bindRestartGame(handleRestartMatch);
 
-  view.setPlayerSettings(model.state.players);
+  // Load the model settings into the view
+  view.setPlayerSettings(model.setup.players);
 
-  function handleStartGame() {
-    model.state.players = view.getPlayerSettings();
-    view.createGameBoard(model.state.board);
+  function handleStartMatch() {
+    model.setup.players = view.getPlayerSettings();
+    model.match = MatchFactory(
+      matrix.generate(model.setup.board.width, model.setup.board.height),
+      model.setup.players
+    );
+    startMatch(model.match);
+    view.createGameBoard(model.match.board);
     view.bindGameboard(handleGameboardCellPressed);
-    view.updateGameState(model.state);
-    model.resetGame();
+    updateMatchState(model.match);
     view.changeToGamePage();
   }
 
-  function handleEndGame() {
-    model.resetGame();
+  function handleEndMatch() {
     view.changeToSetupPage();
+    model.match = null;
     view.destroyGameboard();
   }
 
-  function handleRestartGame() {
-    model.resetGame();
-    view.updateGameState(model.state);
+  function handleRestartMatch() {
+    resetMatch(model.match);
+    startMatch(model.match);
+    updateMatchState(model.match);
   }
 
   function handleGameboardCellPressed(row, col) {
-    model.executeMove(row, col);
-    view.updateGameState(model.state);
+    executeMove(model.match, row, col);
+    updateMatchState(model.match);
+  }
+
+  function updateMatchState(match) {
+    view.setStatusText(display.getMatchStatusString(match));
+    view.setStatusColor(display.getMatchStatusColor(match));
+    view.updateGameboard(match.board, match.players);
   }
 };
