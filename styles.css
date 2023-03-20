@@ -1,14 +1,5 @@
 @import url("reset.css");
-
-@font-face {
-  font-family: "ITCAvantGardeStd";
-  font-style: normal;
-  font-weight: 400;
-  src: local(""),
-    url("./fonts/itcavantgardestd-bkobl-webfont.woff2") format("woff2"),
-    /* Super Modern Browsers */
-      url("./fonts/itcavantgardestd-bkobl-webfont.woff") format("woff"); /* Modern Browsers */
-}
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 * {
   box-sizing: border-box;
@@ -16,7 +7,13 @@
 
 body {
   background-color: #cbd5e1;
-  font-family: "ITCAvantGardeStd", sans-serif;
+  font-family: "Roboto", sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 /* div {
@@ -27,7 +24,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #0284c7;
+  background-color: #38bdf8;
   height: 100px;
 }
 
@@ -36,7 +33,12 @@ body {
 }
 
 .setup {
-  margin-top: 30px;
+  background-color: white;
+  border-radius: 10px;
+  margin: 30px 0 30px 0;
+  width: 700px;
+  padding: 30px;
+  align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,6 +64,7 @@ body {
 .setting {
   display: flex;
   flex-direction: column;
+  gap: 5px;
   width: 200px;
 }
 
@@ -77,7 +80,8 @@ button.start {
   height: 80px;
   border-radius: 30px;
   background-color: lightgreen;
-  font-family: "ITCAvantGardeStd";
+  font-size: large;
+  font-family: "Roboto", sans-serif;
 }
 
 button.start:hover {
@@ -87,6 +91,11 @@ button.start:hover {
 .game {
   display: none;
   justify-content: center;
+  background-color: white;
+  align-self: center;
+  margin-top: 30px;
+  width: 700px;
+  border-radius: 10px;
 }
 
 .game > .content {
@@ -96,11 +105,12 @@ button.start:hover {
 }
 
 .status-text {
-  margin: 10px 0;
+  margin: 20px 0;
   font-size: 24px;
   background-color: red;
   padding: 10px;
   border-radius: 10px;
+  border: 2px solid black;
 }
 
 .gameboard {
@@ -116,12 +126,17 @@ button.start:hover {
   width: 60px;
   height: 60px;
   border: 1px solid blue;
-  border-radius: 30px;
-  background-color: black;
+  border-radius: 25px;
+}
+
+.cell:hover {
+  width: 60px;
+  height: 60px;
+  border: 3px solid lightgreen;
 }
 
 .gameover {
-  margin-top: 20px;
+  margin: 20px 0;
   display: flex;
   gap: 10px;
 }
