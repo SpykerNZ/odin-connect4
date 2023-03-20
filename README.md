@@ -6,7 +6,7 @@
 
 ## About
 
-- Re-creates the board game "Connect 4"
+- Recreates the board game "Connect 4"
 - Player name & color can be changed
 - Can play vs another human or against an AI opponent (who currently makes random moves)
 - Built using HTML, CSS and Javascript
